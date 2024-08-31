@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app9000
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app9000
+  template:
+    metadata:
+      labels:
+        app: app9000
+      name: app9000
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: performance
+                    operator: NotIn
+                    values:
+                      - high-performance
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - app300
+              topologyKey: kubernetes.io/hostname
+      containers:
+        - image: registry.k8s.io/pause:2.0
+          name: app9000

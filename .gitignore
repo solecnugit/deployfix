@@ -1,0 +1,6 @@
+/target
+/output
+output.ir
+.z3-trace
+/.idea
+/.vscode

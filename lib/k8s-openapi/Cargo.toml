@@ -1,0 +1,67 @@
+[package]
+name = "k8s-openapi"
+version = "0.20.0"
+license = "Apache-2.0"
+authors = ["Arnav Singh <me@arnavion.dev>"]
+categories = ["api-bindings", "web-programming::http-client"]
+description = "Bindings for the Kubernetes client API"
+documentation = "https://arnavion.github.io/k8s-openapi/v0.20.x/k8s_openapi/"
+edition = "2021"
+keywords = ["client", "kubernetes", "k8s", "http"]
+readme = "README.md"
+repository = "https://github.com/Arnavion/k8s-openapi"
+include = [
+    "build.rs",
+    "Cargo.toml",
+    "LICENSE",
+    "README.md",
+    "src/**/*",
+]
+
+# Dummy value to allow metadata to work, since passing metadata to downstream currently requires the links key to be set.
+#
+# It incorporates the version because we don't want to unnecessarily prevent multiple versions of k8s-openapi in the dep graph.
+# Unfortunately, this means the env var that downstream needs to check also incorporates the version number, so downstream build scripts are recommended
+# to enumerate all env vars looking for one with `DEP_K8S_OPENAPI_` prefix and `_VERSION` suffix, instead of looking it up by its whole name.
+#
+# See https://github.com/rust-lang/cargo/issues/3544 for being able to pass metadata to downstream without setting this key.
+links = "k8s-openapi-0.20.0"
+
+[dependencies]
+base64 = { version = "0.21", default-features = false, features = [
+    "alloc", # for base64::Engine::decode and base64::Engine::encode
+] }
+chrono = { version = "0.4.1", default-features = false, features = [
+    "alloc", # for chrono::DateTime::<Utc>::to_rfc3339_opts
+    "serde", # for chrono::DateTime<Utc>: serde::Deserialize, serde::Serialize
+] }
+schemars = { version = "0.8", optional = true, default-features = false }
+serde = { version = "1", default-features = false }
+serde_json = { version = "1", default-features = false, features = [
+    "alloc", # "serde_json requires that either `std` (default) or `alloc` feature is enabled"
+] }
+serde-value = { version = "0.7", default-features = false }
+serde_yaml = { version = "0.9", path = "../serde-yaml"}
+
+[features]
+# Each feature corresponds to a supported version of Kubernetes
+earliest = ["v1_24"]
+v1_24 = []
+v1_25 = []
+v1_26 = []
+v1_27 = []
+v1_28 = []
+latest = ["v1_28"]
+
+[package.metadata.docs.rs]
+# docs.rs generates docs for the latest version. To see the docs for an older version, please generate them yourself.
+features = ["latest"]
+
+[workspace]
+members = [
+    "k8s-openapi-codegen",
+    "k8s-openapi-codegen-common",
+    "k8s-openapi-derive",
+    "k8s-openapi-tests",
+    "k8s-openapi-tests-macro-deps",
+]

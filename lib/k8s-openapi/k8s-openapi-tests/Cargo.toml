@@ -1,0 +1,57 @@
+[package]
+name = "k8s-openapi-tests"
+version = "0.1.0"
+license = "Apache-2.0"
+authors = ["Arnav Singh <me@arnavion.dev>"]
+edition = "2021"
+publish = false
+include = [
+    "build.rs",
+    "Cargo.toml",
+    "src/**/*",
+]
+
+[dependencies]
+base64 = { version = "0.21", default-features = false, features = [
+    "alloc", # for base64::Engine::decode and base64::Engine::encode
+] }
+bytes = { version = "1", default-features = false}
+dirs = { version = "5", default-features = false }
+futures-core = { version = "0.3", default-features = false }
+futures-io = { version = "0.3", default-features = false }
+futures-util = { version = "0.3", default-features = false, features = [
+    "io", # for futures_util::StreamExt::into_async_read
+] }
+http = { version = "1", default-features = false, features = [
+    "std", # "`std` feature currently required, support for `no_std` may be added later"
+] }
+k8s-openapi = { path = "..", features = [
+    "schemars", # for resource types: schemars::JsonSchema
+] }
+k8s-openapi-derive = { path = "../k8s-openapi-derive" }
+percent-encoding = { version = "2", default-features = false }
+pin-project = { version = "1", default-features = false }
+reqwest = { version = "0.11.2", default-features = false, features = [
+    "rustls-tls-manual-roots", # for TLS support
+    "stream", # for reqwest::Response::bytes_stream
+] }
+schemars = { version = "0.8", default-features = false, features = [
+    "derive", # for #[derive(schemars::JsonSchema)]
+] }
+serde = { version = "1", default-features = false, features = [
+    "derive",
+] }
+serde_yaml = { version = "0.9", default-features = false }
+tokio = { version = "1", default-features = false, features = [
+    "macros", # for #[tokio::test]
+    "test-util", # for tokio::time::pause
+    "time", # for tokio::time::sleep
+] }
+url = { version = "2", default-features = false }
+
+[features]
+test_v1_24 = ["k8s-openapi/v1_24"]
+test_v1_25 = ["k8s-openapi/v1_25"]
+test_v1_26 = ["k8s-openapi/v1_26"]
+test_v1_27 = ["k8s-openapi/v1_27"]
+test_v1_28 = ["k8s-openapi/v1_28"]

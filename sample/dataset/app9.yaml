@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app9
+spec:
+  replicas: 11
+  selector:
+    matchLabels:
+      app: app9
+  template:
+    metadata:
+      labels:
+        app: app9
+      name: app9
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - app108
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - image: registry.k8s.io/pause:2.0
+        name: app9
+      tolerations:
+      - effect: NoSchedule
+        key: node.kubernetes.io/not-ready
+        operator: Exists

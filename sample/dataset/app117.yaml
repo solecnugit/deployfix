@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app117
+spec:
+  replicas: 11
+  selector:
+    matchLabels:
+      app: app117
+  template:
+    metadata:
+      labels:
+        app: app117
+      name: app117
+    spec:
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - app54
+              - key: app
+                operator: In
+                values:
+                - app5
+                - app103
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - image: registry.k8s.io/pause:2.0
+        name: app117
+      tolerations:
+      - effect: NoSchedule
+        key: node.kubernetes.io/not-ready
+        operator: Exists

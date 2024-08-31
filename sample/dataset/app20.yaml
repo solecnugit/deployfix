@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app20
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: app20
+  template:
+    metadata:
+      labels:
+        app: app20
+      name: app20
+    spec:
+      containers:
+      - image: registry.k8s.io/pause:2.0
+        name: app20
+      tolerations:
+      - effect: NoSchedule
+        key: node.kubernetes.io/not-ready
+        operator: Exists

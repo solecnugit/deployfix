@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app47
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: app47
+  template:
+    metadata:
+      labels:
+        app: app47
+      name: app47
+    spec:
+      containers:
+      - image: registry.k8s.io/pause:2.0
+        name: app47
+      tolerations:
+      - effect: NoSchedule
+        key: node.kubernetes.io/not-ready
+        operator: Exists

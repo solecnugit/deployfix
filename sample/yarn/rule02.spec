@@ -1,0 +1,1 @@
+zk=5,AND(IN,RACK,hbase:NOTIN,NODE,zk)

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app300
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: app300
+  template:
+    metadata:
+      labels:
+        app: app300
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: performance
+                    operator: In
+                    values:
+                      - high-performance
+      containers:
+        - image: registry.k8s.io/pause:2.0
+          name: app300

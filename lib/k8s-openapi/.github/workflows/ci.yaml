@@ -1,0 +1,47 @@
+name: 'CI'
+
+on:
+- 'pull_request'
+- 'push'
+
+jobs:
+  global:
+    runs-on: 'ubuntu-22.04'
+
+    steps:
+    - uses: 'actions/checkout@v4'
+    - run: ./ci/global.sh
+
+
+  list_versions:
+    runs-on: 'ubuntu-22.04'
+
+    steps:
+    - uses: 'actions/checkout@v4'
+    - id: 'run'
+      run: |
+        (
+          printf 'matrix='
+          ./test.sh list-versions | jq --raw-input --null-input --compact-output '[inputs | { version: . }]'
+        ) >"$GITHUB_OUTPUT"
+
+    outputs:
+      matrix: "${{ steps.run.outputs.matrix }}"
+
+
+  per_version:
+    runs-on: 'ubuntu-22.04'
+
+    needs: 'list_versions'
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        include: "${{ fromJSON(needs.list_versions.outputs.matrix) }}"
+
+    steps:
+    - uses: 'actions/checkout@v4'
+    - run: ./ci/per_version.sh
+      env:
+        K8S_OPENAPI_ENABLED_VERSION: "${{ matrix.version }}"
