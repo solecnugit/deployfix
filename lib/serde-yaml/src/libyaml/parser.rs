@@ -84,17 +84,16 @@ impl<'input> Parser<'input> {
         let mut event = MaybeUninit::<sys::yaml_event_t>::uninit();
         unsafe {
             let parser = addr_of_mut!((*self.pin.ptr).sys);
-            if (*parser).error != sys::YAML_NO_ERROR {
+            if (&*parser).error != sys::YAML_NO_ERROR {
                 return Err(Error::parse_error(parser));
             }
             let event = event.as_mut_ptr();
             if sys::yaml_parser_parse(parser, event).fail {
                 return Err(Error::parse_error(parser));
             }
-            let ret = convert_event(&*event, &(*self.pin.ptr).input);
-            let mark = Mark {
-                sys: (*event).start_mark,
-            };
+            let pinned = &*self.pin.ptr;
+            let ret = convert_event(&*event, &pinned.input);
+            let mark = Mark { sys: (&*event).start_mark };
             sys::yaml_event_delete(event);
             Ok((ret, mark))
         }
