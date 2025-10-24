@@ -10,6 +10,7 @@ pub struct EntityMap {
     pub entities: Vec<Entity>,
     pub names: HashSet<String>,
     pub self_conflicts: HashSet<String>,
+    pub raw_entities: Vec<Entity>,
 }
 
 #[derive(Debug, Error)]
@@ -507,13 +508,15 @@ impl EntityMap {
         // Check for duplicate names
         Self::check_duplicate_names(entities)?;
 
-        let (entities, self_conflicts) = Self::preprocessing_self_conflicts(entities.to_owned());
-        let names = Self::collect_entity_names(&entities);
+        let (split_entities, self_conflicts) =
+            Self::preprocessing_self_conflicts(entities.to_owned());
+        let names = Self::collect_entity_names(&split_entities);
 
         Ok(Self {
-            entities,
+            entities: split_entities,
             names,
             self_conflicts,
+            raw_entities: entities.to_owned(),
         })
     }
 }

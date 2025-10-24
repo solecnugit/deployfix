@@ -35,7 +35,7 @@ impl RingSolver {
         let mut graph = Graph::new();
         let mut nodes = HashMap::<String, NodeIndex>::new();
 
-        for entity in map.entities.iter() {
+        for entity in map.raw_entities.iter() {
             let name = entity.name.0.as_str();
             let node = Self::get_or_create_node(name, &mut graph, &mut nodes);
 
